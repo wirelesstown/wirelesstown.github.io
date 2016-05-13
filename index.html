@@ -156,6 +156,7 @@
       var retVal = new Object();
       $.ajax({
         type: "GET",
+        async: false,
         url: "data/apmap.txt",
         dataType: "text",
         success: function (data) {
