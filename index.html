@@ -19,7 +19,7 @@
       var longFl = 1.1;
       var landingStr = "";
 
-      var mac = gup('mac', window.location.href);
+      var macParm = gup('mac', window.location.href);
       var apname = gup('apname', window.location.href);
       var vcname = gup('vcname', window.location.href);
       var essid = gup('essid', window.location.href);
@@ -51,15 +51,28 @@
         for (var j = 1; j < lines.length; j++) {
           var values = lines[j].split(','); // Split up the comma seperated values
           // We read the key,1st, 2nd and 3rd rows
-          mac.push($.trim(values[0])); // Read in as string
-          name.push($.trim(values[1])); // Read in as string
-          url.push($.trim(values[5])); // Read in as string
-          zip.push($.trim(values[2])); // Read in as string
+          if (macParm == $.trim(values[0])) {
+            mac.push($.trim(values[0])); // Read in as string
+            name.push($.trim(values[1])); // Read in as string
+            url.push($.trim(values[5])); // Read in as string
+            zip.push($.trim(values[2])); // Read in as string
 
-          // Deal with as Floating
-          lat.push(parseInt(values[3]));
-          long.push(parseInt(values[4]));
+            // Deal with as Floating
+            lat.push(parseInt(values[3]));
+            long.push(parseInt(values[4]));
+          }
         }
+
+        if ((mac.length < 1) && ((typeof macParm === 'undefined') || ($.trim(macParm).length == 0 ) || (macParm == null))){
+          mac.push("00:11:22:33:44:55"); // Read in as string
+          name.push("Wireless-Town"); // Read in as string
+          url.push("https://www.facebook.com/wirelesstown"); // Read in as string
+          zip.push("30076"); // Read in as string
+          // Deal with as Floating
+          lat.push(34.018332);
+          long.push(-84.3228317);
+        }
+
         // For display
         var x = 0;
         //console.log($.trim(headings[0])+" : "+mac[x] + $.trim(headings[1])+" : "+name[x] + $.trim(headings[2])+" : "+zip[x] + $.trim(headings[4])+" : "+url[x]);
@@ -68,6 +81,7 @@
         myData['lat'] = lat[x];
         myData['long'] = long[x];
         myData['url'] = $.trim(url[x]);
+
         return myData;
       }
 
@@ -205,7 +219,7 @@
               <div class="mdl-card__supporting-text">
                 <h4>Features</h4>
                 Dolore ex deserunt aute fugiat aute nulla ea sunt aliqua nisi cupidatat eu. Nostrud in laboris labore nisi amet do dolor eu fugiat consectetur elit cillum esse.
-                <script>document.write(mac);</script>
+                <script>document.write(macParm);</script>
               </div>
               <div class="mdl-card__actions">
                 <a href="#" class="mdl-button">Read our features</a>
