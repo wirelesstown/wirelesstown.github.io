@@ -1,6 +1,95 @@
 <!doctype html>
 <html lang="">
   <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script>
+      // Read in url and return variables
+      function gup( name, url ) {
+        if (!url) url = location.href;
+        name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+        var regexS = "[\\?&]"+name+"=([^&#]*)";
+        var regex = new RegExp( regexS );
+        var results = regex.exec( url );
+        return results == null ? null : results[1];
+      }
+
+      var nameStr = "";
+      var zipInt = 123456;
+      var latFl = 1.1;
+      var longFl = 1.1;
+      var landingStr = "";
+
+      var mac = gup('mac', window.location.href);
+      var apname = gup('apname', window.location.href);
+      var vcname = gup('vcname', window.location.href);
+      var essid = gup('essid', window.location.href);
+      var ip = gup('ip', window.location.href);
+      var url = gup('url', window.location.href);
+
+      function setVars (retVal){
+        nameStr = retVal['name'];
+        zipInt = retVal['zip'];
+        latFl = retVal['lat'];
+        longFl = retVal['long'];
+        urlStr = retVal['url'];
+      }
+
+      // Let's process the data from the data file
+      function processData(data) {
+        var lines = data.split(/\r\n|\n/);
+        var myData = new Object();
+        //Set up the data arrays
+        var mac = [];
+        var name = [];
+        var zip = [];
+        var lat = [];
+        var long = [];
+        var url = [];
+
+        var headings = lines[0].split(','); // Splice up the first row to get the headings
+
+        for (var j = 1; j < lines.length; j++) {
+          var values = lines[j].split(','); // Split up the comma seperated values
+          // We read the key,1st, 2nd and 3rd rows
+          mac.push($.trim(values[0])); // Read in as string
+          name.push($.trim(values[1])); // Read in as string
+          url.push($.trim(values[5])); // Read in as string
+          zip.push($.trim(values[2])); // Read in as string
+
+          // Deal with as Floating
+          lat.push(parseInt(values[3]));
+          long.push(parseInt(values[4]));
+        }
+        // For display
+        var x = 0;
+        //console.log($.trim(headings[0])+" : "+mac[x] + $.trim(headings[1])+" : "+name[x] + $.trim(headings[2])+" : "+zip[x] + $.trim(headings[4])+" : "+url[x]);
+        myData['name'] = $.trim(name[x]);
+        myData['zip'] = zip[x];
+        myData['lat'] = lat[x];
+        myData['long'] = long[x];
+        myData['url'] = $.trim(url[x]);
+        return myData;
+      }
+
+      function getData() {
+        // AJAX in the data file
+        var retVal = new Object();
+        $.ajax({
+          type: "GET",
+          async: false,
+          url: "data/apmap.html",
+          dataType: "text",
+          success: function (data) {
+            retVal = processData(data);
+          }
+        });
+        return retVal
+      }
+
+      setVars(getData());
+
+
+    </script>
     <!-- sFxJjnPj9QmkdBJp -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -53,29 +142,13 @@
     <link rel="stylesheet" href="styles/main.css">
 
     <!-- Facebook stuff -->
-    <!-- You can use Open Graph tags to customize link previews. Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
-    <meta property="og:url"           content="http://www.facebook.com/wireless-town" />
-    <meta property="og:type"          content="website" />
-    <meta property="og:title"         content="Wireless-Town" />
-    <meta property="og:description"   content="Wireless-Town Wi-Fi.  Uniting Communities with Technology" />
-    <meta property="og:image"         content="https://scontent-dfw1-1.xx.fbcdn.net/v/t1.0-9/564088_378857152190243_294937632_n.jpg?oh=283ae000d9e4c321f0a7c17c3de1e083&oe=579D8557" />
-
-
+    <script>document.write('<meta property="og:url"content="' + urlStr + '" />');</script>
+    <meta property="og:type" content="website" />
+    <script>document.write('<meta property="og:title" content="' + nameStr + '" />');</script>
   </head>
   <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
   <div id="fb-root"></div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
   <script>
-    // Read in url and return variables
-    function gup( name, url ) {
-      if (!url) url = location.href;
-      name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-      var regexS = "[\\?&]"+name+"=([^&#]*)";
-      var regex = new RegExp( regexS );
-      var results = regex.exec( url );
-      return results == null ? null : results[1];
-    }
-
     // Initialize Facebook
     window.fbAsyncInit = function() {
       FB.init({
@@ -92,82 +165,6 @@
       js.src = "//connect.facebook.net/en_US/sdk.js";
       fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
-
-    var mac = gup('mac', window.location.href);
-    var apname = gup('apname', window.location.href);
-    var vcname = gup('vcname', window.location.href);
-    var essid = gup('essid', window.location.href);
-    var ip = gup('ip', window.location.href);
-    var url = gup('url', window.location.href);
-
-    var nameStr = "";
-    var zipInt = 123456;
-    var latFl = 1.1;
-    var longFl = 1.1;
-    var landingStr = "";
-
-    function setVars (retVal){
-      nameStr = retVal['name'];
-      zipInt = retVal['zip'];
-      latFl = retVal['lat'];
-      longFl = retVal['long'];
-      urlStr = retVal['url'];
-    }
-
-    // Let's process the data from the data file
-    function processData(data) {
-      var lines = data.split(/\r\n|\n/);
-      var myData = new Object();
-      //Set up the data arrays
-      var mac = [];
-      var name = [];
-      var zip = [];
-      var lat = [];
-      var long = [];
-      var url = [];
-
-      var headings = lines[0].split(','); // Splice up the first row to get the headings
-
-      for (var j = 1; j < lines.length; j++) {
-        var values = lines[j].split(','); // Split up the comma seperated values
-        // We read the key,1st, 2nd and 3rd rows
-        mac.push($.trim(values[0])); // Read in as string
-        name.push($.trim(values[1])); // Read in as string
-        url.push($.trim(values[5])); // Read in as string
-        zip.push($.trim(values[2])); // Read in as string
-
-        // Deal with as Floating
-        lat.push(parseInt(values[3]));
-        long.push(parseInt(values[4]));
-      }
-      // For display
-      var x = 0;
-      //console.log($.trim(headings[0])+" : "+mac[x] + $.trim(headings[1])+" : "+name[x] + $.trim(headings[2])+" : "+zip[x] + $.trim(headings[4])+" : "+url[x]);
-      myData['name'] = $.trim(name[x]);
-      myData['zip'] = zip[x];
-      myData['lat'] = lat[x];
-      myData['long'] = long[x];
-      myData['url'] = $.trim(url[x]);
-      return myData;
-    }
-
-    function getData() {
-      // AJAX in the data file
-      var retVal = new Object();
-      $.ajax({
-        type: "GET",
-        async: false,
-        url: "data/apmap.html",
-        dataType: "text",
-        success: function (data) {
-          retVal = processData(data);
-        }
-      });
-      return retVal
-    }
-
-    setVars(getData());
-
   </script>
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
@@ -175,7 +172,6 @@
         </div>
         <div class="mdl-layout__header-row">
            <script>
-             console.log(nameStr);
               document.write('<h3>' + nameStr + '</h3> ');
            </script>
          <h3>&nbsp;Wi-Fi</h3>
@@ -197,15 +193,9 @@
       <main class="mdl-layout__content">
         <div class="mdl-layout__tab-panel is-active" id="overview">
           <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
-            <div class="fb-share-button" data-href="https://www.facebook.com/wirelesstown" data-layout="button_count" data-mobile-iframe="true"></div>
-
+            <script>document.write('<div class="fb-share-button" data-href="' + urlStr + '" data-layout="button_count" data-mobile-iframe="true"></div>');</script>
             <!-- Your like button code -->
-            <div class="fb-like"
-                 data-href="https://www.facebook.com/wirelesstown"
-                 data-layout="standard"
-                 data-action="like"
-                 data-show-faces="true">
-            </div>
+            <script>document.write('<div class="fb-like" data-href="' + urlStr + '" data-layout="standard" data-action="like" data-show-faces="true"></div>');</script>
           </section>
           <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
             <header class="section__play-btn mdl-cell mdl-cell--3-col-desktop mdl-cell--2-col-tablet mdl-cell--4-col-phone mdl-color--teal-100 mdl-color-text--white">
