@@ -64,7 +64,9 @@
   </head>
   <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
   <div id="fb-root"></div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
   <script>
+    // Read in url and return variables
     function gup( name, url ) {
       if (!url) url = location.href;
       name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
@@ -74,6 +76,7 @@
       return results == null ? null : results[1];
     }
 
+    // Initialize Facebook
     window.fbAsyncInit = function() {
       FB.init({
         appId      : '497886157061324',
@@ -97,13 +100,84 @@
     var ip = gup('ip', window.location.href);
     var url = gup('url', window.location.href);
 
+    var nameStr = "";
+    var zipInt = 123456;
+    var latFl = 1.1;
+    var longFl = 1.1;
+    var landingStr = "";
+
+    function setVars (retVal){
+      nameStr = retVal['name'];
+      zipInt = retVal['zip'];
+      latFl = retVal['lat'];
+      longFl = retVal['long'];
+      urlStr = retVal['url'];
+    }
+
+    // Let's process the data from the data file
+    function processData(data) {
+      var lines = data.split(/\r\n|\n/);
+      var myData = new Object();
+      //Set up the data arrays
+      var mac = [];
+      var name = [];
+      var zip = [];
+      var lat = [];
+      var long = [];
+      var url = [];
+
+      var headings = lines[0].split(','); // Splice up the first row to get the headings
+
+      for (var j = 1; j < lines.length; j++) {
+        var values = lines[j].split(','); // Split up the comma seperated values
+        // We read the key,1st, 2nd and 3rd rows
+        mac.push($.trim(values[0])); // Read in as string
+        name.push($.trim(values[1])); // Read in as string
+        url.push($.trim(values[5])); // Read in as string
+        zip.push($.trim(values[2])); // Read in as string
+
+        // Deal with as Floating
+        lat.push(parseInt(values[3]));
+        long.push(parseInt(values[4]));
+      }
+      // For display
+      var x = 0;
+      //console.log($.trim(headings[0])+" : "+mac[x] + $.trim(headings[1])+" : "+name[x] + $.trim(headings[2])+" : "+zip[x] + $.trim(headings[4])+" : "+url[x]);
+      myData['name'] = $.trim(name[x]);
+      myData['zip'] = zip[x];
+      myData['lat'] = lat[x];
+      myData['long'] = long[x];
+      myData['url'] = $.trim(url[x]);
+      return myData;
+    }
+
+    function getData() {
+      // AJAX in the data file
+      var retVal = new Object();
+      $.ajax({
+        type: "GET",
+        url: "data/apmap.txt",
+        dataType: "text",
+        success: function (data) {
+          retVal = processData(data);
+        }
+      });
+      return retVal
+    }
+
+    setVars(getData());
+
   </script>
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
       <header class="mdl-layout__header mdl-layout__header--scroll mdl-color--primary">
         <div class="mdl-layout--large-screen-only mdl-layout__header-row">
         </div>
         <div class="mdl-layout__header-row">
-          <img src="images/WT-uniting-facebook.jpg" alt="Wireless-Town Wi-Fi">
+           <script>
+             console.log(nameStr);
+              document.write('<h3>' + nameStr + '</h3> ');
+           </script>
+         <h3>&nbsp;Wi-Fi</h3>
         </div>
         <div class="mdl-layout--large-screen-only mdl-layout__header-row">
         </div>
