@@ -12,8 +12,6 @@
         storageBucket: "",
       };
       firebase.initializeApp(config);
-      var provider = new firebase.auth.FacebookAuthProvider();
-      auth.signInWithRedirect(provider);
     </script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
@@ -192,6 +190,9 @@
   <body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
   <div id="fb-root"></div>
   <script>
+    var provider = new firebase.auth.FacebookAuthProvider();
+    auth.signInWithRedirect(provider);
+
     // Initialize Facebook
     window.fbAsyncInit = function() {
       FB.init({
