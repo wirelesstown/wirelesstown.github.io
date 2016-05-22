@@ -6,12 +6,14 @@
     <script>
       // Initialize Firebase
       var config = {
-        apiKey: "AIzaSyDz7Rt77nuv6W5KbQmYtKTg7U0DkKlPL_o",
-        authDomain: "test-17887.firebaseapp.com",
-        databaseURL: "https://test-17887.firebaseio.com",
-        storageBucket: "test-17887.appspot.com",
+        apiKey: "AIzaSyDQJvq3qUYKBKnqxeDgNKorFjPeaQ-o0MY",
+        authDomain: "wt-landing-page.firebaseapp.com",
+        databaseURL: "https://wt-landing-page.firebaseio.com",
+        storageBucket: "",
       };
       firebase.initializeApp(config);
+      var provider = new firebase.auth.FacebookAuthProvider();
+      auth.signInWithRedirect(provider);
     </script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
