@@ -32,12 +32,12 @@
       var longFl = 1.1;
       var landingStr = "";
 
-      var macParm = gup('mac', window.location.href);
-      var apname = gup('apname', window.location.href);
-      var vcname = gup('vcname', window.location.href);
-      var essid = gup('essid', window.location.href);
-      var ip = gup('ip', window.location.href);
-      var url = gup('url', window.location.href);
+      var macParm = gup('mac', decodeURIComponent(window.location.href));
+      var apname = gup('apname', decodeURIComponent(window.location.href));
+      var vcname = gup('vcname', decodeURIComponent(window.location.href));
+      var essid = gup('essid', decodeURIComponent(window.location.href));
+      var ip = gup('ip', decodeURIComponent(window.location.href));
+      var url = gup('url', decodeURIComponent(window.location.href));
 
       function setVars (retVal){
         nameStr = retVal['name'];
